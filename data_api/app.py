@@ -25,6 +25,7 @@ def getStorage(dataset):
     connNeo = Neo(uri = uri, user = user, password=password)
 
     dataset_Neo = connNeo.getStorage(dataset = dataset)
+    connNeo.close()
 
     if dataset_Neo[0][0] == 'Redivis':
 
@@ -36,10 +37,41 @@ def getStorage(dataset):
     else:
         return(jsonify(dataset_Neo))
 
-    #
+    
+
+@app.route('/license/<dataset>')
+def getLicense(dataset):
+
+    uri = "bolt://localhost:7687"
+    user = "neo4j"
+    password = os.environ.get('Neo4j_password')
+    connNeo = Neo(uri = uri, user = user, password=password)
+
+    dataset_Neo = connNeo.getLicense(dataset = dataset)
+    connNeo.close()
 
 
-#@app.route('/license/<dataset>')
+    with open('../roamLookup.json') as json_file:
+        roamLookup = json.load(json_file)
+
+    if dataset.lower() in roamLookup:
+
+        roam = Roam('https://api.roam.plus/external/', os.environ.get('Roam_API_Key'))
+        
+        id = roamLookup[dataset.lower()]
+
+        license = roam.getOneSubwithRelations(id = str(id), relations=['licensePeriods.license.publisher','licensePeriods.licensePeriodStatus'])
+
+        license = license['included']
+        
+        return(jsonify({'Neo4j': dataset_Neo, 'Roam': license}))
+    
+    else:
+
+        return(jsonify(dataset_Neo)) 
+
+
+
 
 #@app.route('/subscriptionPeriod/<dataset>')
 
@@ -48,3 +80,5 @@ def getStorage(dataset):
 #@app.route('/description/<dataset>')
 
 #@app.route('/userInfo/<sunet>')
+
+#@app.route('/publisher/<pubName>)

@@ -10,7 +10,7 @@ class Neo:
     def close(self):
         self.driver.close()
 
-
+    #Storage endpoint
     @staticmethod
     def __getStorage(tx, name):
         query = "MATCH (a:Dataset)-[r:STORED_ON]->(b:StorageSystem) \
@@ -25,6 +25,22 @@ class Neo:
             result = session.read_transaction(self.__getStorage, dataset)
             storage = list(result)
             return(storage)
+
+    #License endpoint
+    @staticmethod
+    def __getLicense(tx, name):
+        query = "MATCH (a:Dataset)<-[r:LICENSE_TYPE]-(b:TermsAndConditions) \
+                 WHERE a.title = '%s' \
+                 RETURN b.description, b.usageRestriction" % (name)
+        
+        result = tx.run(query, name = name)
+        return [record for record in result]
+
+    def getLicense(self, dataset):
+        with self.driver.session() as session:
+            result = session.read_transaction(self.__getLicense, dataset)
+            license = list(result)
+            return(license)
 
 
 # if __name__ =="__main__":
