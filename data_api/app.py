@@ -13,6 +13,12 @@ app.config['dbPwd']             = os.environ.get('Neo4j_password')
 
 roam = Roam('https://api.roam.plus/external/', os.environ.get('Roam_API_Key'))
 
+uri = "bolt://localhost:7687"
+user = "neo4j"
+password = os.environ.get('Neo4j_password')
+connNeo = Neo(uri = uri, user = user, password=password)
+
+
 
 @app.route('/')
 def home():
@@ -45,14 +51,8 @@ def getStorage(dataset):
 @app.route('/license/<dataset>')
 def getLicense(dataset):
 
-    uri = "bolt://localhost:7687"
-    user = "neo4j"
-    password = os.environ.get('Neo4j_password')
-    connNeo = Neo(uri = uri, user = user, password=password)
-
     dataset_Neo = connNeo.getLicense(dataset = dataset)
-    connNeo.close()
-
+   
 
     with open('../roamLicenseLookup.json') as json_file:
         roamLookup = json.load(json_file)
@@ -95,9 +95,20 @@ def getSubscriptionPeriod(dataset):
 
 
 
-#@app.route('/users/<dataset>')
+@app.route('/users/<dataset>')
+def getUsers(dataset):
 
-#@app.route('/description/<dataset>')
+    users_Neo = connNeo.getUsers(dataset = dataset)
+
+    return(jsonify({'Users': users_Neo}))
+
+    
+
+@app.route('/description/<dataset>')
+def getDatasetDescription(dataset):
+
+    dataset = connNeo.getDataset(dataset=dataset)
+
 
 #@app.route('/userInfo/<sunet>')
 
