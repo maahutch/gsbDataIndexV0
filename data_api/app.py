@@ -11,6 +11,9 @@ app.config['roamToken']         = os.environ.get('Roam_API_Key')
 app.config['REDIVIS_API_TOKEN'] = os.environ.get('REDIVIS_API_TOKEN')
 app.config['dbPwd']             = os.environ.get('Neo4j_password')
 
+roam = Roam('https://api.roam.plus/external/', os.environ.get('Roam_API_Key'))
+
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -51,12 +54,10 @@ def getLicense(dataset):
     connNeo.close()
 
 
-    with open('../roamLookup.json') as json_file:
+    with open('../roamLicenseLookup.json') as json_file:
         roamLookup = json.load(json_file)
 
     if dataset.lower() in roamLookup:
-
-        roam = Roam('https://api.roam.plus/external/', os.environ.get('Roam_API_Key'))
         
         id = roamLookup[dataset.lower()]
 
@@ -73,7 +74,26 @@ def getLicense(dataset):
 
 
 
-#@app.route('/subscriptionPeriod/<dataset>')
+@app.route('/subscriptionPeriod/<dataset>')
+def getSubscriptionPeriod(dataset): 
+
+        with open('../roamLicenseLookup.json') as json_file:
+            roamLookup = json.load(json_file)
+
+        if dataset.lower() in roamLookup:
+        
+            id = roamLookup[dataset.lower()]
+
+            subP = roam.getOneSubwithRelations(id, ['subscriptionPeriods'])
+
+            subP = subP['included']
+
+            return(jsonify({'Roam': subP}))
+
+        else: 
+            return render_template('error.html')
+
+
 
 #@app.route('/users/<dataset>')
 
