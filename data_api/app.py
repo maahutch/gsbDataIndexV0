@@ -119,9 +119,25 @@ def getUserDatasets(sunet):
 
     return(jsonify({sunet: userDatasets}))
 
-@app.route('/publisher/<pubName>')
-def getPublisher(pubName):
+@app.route('/publisher/<dataset>')
+def getPublisher(dataset):
     
-    publisher = connNeo.getPublisher(pubName)
+    publisher_Neo = connNeo.getPublisher(dataset)
 
-    return(jsonify({'Publisher': publisher}))
+    with open('../roamLicenseLookup.json') as json_file:
+        roamLookup = json.load(json_file)
+
+    if dataset.lower() in roamLookup:
+        
+        id = roamLookup[dataset.lower()]
+
+        pub = roam.getOneSubwithRelations(id = str(id), relations=['licensePeriods.license.publisher'])
+
+        pub = pub['included']
+        
+        return(jsonify({'Neo4j': publisher_Neo, 'Roam': pub}))
+    
+    else:
+
+        return(jsonify(publisher_Neo)) 
+

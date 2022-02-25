@@ -130,17 +130,17 @@ class Neo:
 
     #Publisher
     @staticmethod
-    def __getPublisher(tx, pubName):
-        query = "MATCH (a:Publisher) \
-                 WHERE a.publisherName = '%s' \
-                 RETURN a.publisherName, \
-                        a.wikiDataId " % (pubName)
-        result = tx.run(query, pubName=pubName)
+    def __getPublisher(tx, dataset):
+        query = "MATCH (a:Publisher)-[r:PUBLISHED_BY]->(b:Dataset) \
+                 WHERE b.title = '%s' \
+                 RETURN a.publisherName,      \
+                        a.wikiDataId" % (dataset)
+        result = tx.run(query, dataset=dataset)
         return [record for record in result]
 
-    def getPublisher(self, pubName):
+    def getPublisher(self, dataset):
         with self.driver.session() as session: 
-            result = session.read_transaction(self.__getPublisher, pubName)
+            result = session.read_transaction(self.__getPublisher, dataset)
             pub = list(result)
             return(pub)
 
