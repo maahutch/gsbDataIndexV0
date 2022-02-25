@@ -59,6 +59,90 @@ class Neo:
             return(users)
 
 
+    #Dataset Description
+    @staticmethod
+    def __getDescription(tx, name):
+        query = "MATCH (a:Dataset) \
+                 WHERE a.title = '%s' \
+                 RETURN a.abstract, \
+                        a.acquisitionNote, \
+                        a.contributor, \
+                        a.contributorIdentifier, \
+                        a.contributorRole, \
+                        a.coverageDate, \
+                        a.coveragePlace, \
+                        a.coveragePopulation, \
+                        a.coverageTopic, \
+                        a.dataFormatNote, \
+                        a.dataResourceType, \
+                        a.documentation, \
+                        a.extent, \
+                        a.onA2Z, \
+                        a.publicationDate, \
+                        a.recordSource, \
+                        a.title, \
+                        a.updatedNote, \
+                        a.verison " % (name)
+        result = tx.run(query, name=name)
+        return [record for record in result]
+
+    def getDescription(self, dataset):
+        with self.driver.session() as session: 
+            result = session.read_transaction(self.__getDescription, dataset)
+            desc = list(result)
+            return(desc)
+
+
+    #User datasets
+    @staticmethod
+    def __getUserDatasets(tx, sunet):
+        query = "MATCH (b:User)-[r:GRANTED_ACCESS]->(a:Dataset) \
+                 WHERE b.sunet = '%s' \
+                 RETURN a.abstract, \
+                        a.acquisitionNote, \
+                        a.contributor, \
+                        a.contributorIdentifier, \
+                        a.contributorRole, \
+                        a.coverageDate, \
+                        a.coveragePlace, \
+                        a.coveragePopulation, \
+                        a.coverageTopic, \
+                        a.dataFormatNote, \
+                        a.dataResourceType, \
+                        a.documentation, \
+                        a.extent, \
+                        a.onA2Z, \
+                        a.publicationDate, \
+                        a.recordSource, \
+                        a.title, \
+                        a.updatedNote, \
+                        a.verison " % (sunet)
+        result = tx.run(query, sunet=sunet)
+        return [record for record in result]
+   
+                     
+    def getUserDatasets(self, sunet):
+        with self.driver.session() as session: 
+            result = session.read_transaction(self.__getUserDatasets, sunet)
+            datasets = list(result)
+            return(datasets)
+
+
+    #Publisher
+    @staticmethod
+    def __getPublisher(tx, pubName):
+        query = "MATCH (a:Publisher) \
+                 WHERE a.publisherName = '%s' \
+                 RETURN a.publisherName, \
+                        a.wikiDataId " % (pubName)
+        result = tx.run(query, pubName=pubName)
+        return [record for record in result]
+
+    def getPublisher(self, pubName):
+        with self.driver.session() as session: 
+            result = session.read_transaction(self.__getPublisher, pubName)
+            pub = list(result)
+            return(pub)
 
 # if __name__ =="__main__":
 #    uri = "bolt://127.0.0.1:7687"

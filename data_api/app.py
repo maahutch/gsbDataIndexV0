@@ -107,9 +107,21 @@ def getUsers(dataset):
 @app.route('/description/<dataset>')
 def getDatasetDescription(dataset):
 
-    dataset = connNeo.getDataset(dataset=dataset)
+    datasetDesc = connNeo.getDescription(dataset=dataset)
+
+    return(jsonify({'Dataset Description': datasetDesc}))
 
 
-#@app.route('/userInfo/<sunet>')
+@app.route('/userInfo/<sunet>')
+def getUserDatasets(sunet):
 
-#@app.route('/publisher/<pubName>)
+    userDatasets = connNeo.getUserDatasets(sunet= sunet)
+
+    return(jsonify({sunet: userDatasets}))
+
+@app.route('/publisher/<pubName>')
+def getPublisher(pubName):
+    
+    publisher = connNeo.getPublisher(pubName)
+
+    return(jsonify({'Publisher': publisher}))
