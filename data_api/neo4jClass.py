@@ -144,6 +144,21 @@ class Neo:
             pub = list(result)
             return(pub)
 
+
+    #AllDatasetNames
+    @staticmethod
+    def __get_Datasets(tx):
+
+        query = "MATCH (a:Dataset) RETURN a.title"
+        result = tx.run(query)
+        return [record for record in result]
+
+    def getAllDatasets(self):
+        with self.driver.session() as session: 
+            result = session.read_transaction(self.__get_Datasets)
+            return(result)
+
+
 # if __name__ =="__main__":
 #    uri = "bolt://127.0.0.1:7687"
 #    user = "neo4j"

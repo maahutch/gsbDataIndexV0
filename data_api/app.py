@@ -19,12 +19,12 @@ password = os.environ.get('Neo4j_password')
 connNeo = Neo(uri = uri, user = user, password=password)
 
 
-
+#Home
 @app.route('/')
 def home():
     return render_template('home.html')
 
-
+#Return Storage Information (Neo4j & Redivis)
 @app.route('/storage/<dataset>')
 def getStorage(dataset):
 
@@ -47,7 +47,7 @@ def getStorage(dataset):
         return(jsonify(dataset_Neo))
 
     
-
+#Return License Information(Neo4j & Roam)
 @app.route('/license/<dataset>')
 def getLicense(dataset):
 
@@ -73,7 +73,7 @@ def getLicense(dataset):
 
 
 
-
+#Return subscription period (Roam)
 @app.route('/subscriptionPeriod/<dataset>')
 def getSubscriptionPeriod(dataset): 
 
@@ -94,7 +94,7 @@ def getSubscriptionPeriod(dataset):
             return render_template('error.html')
 
 
-
+#Return Users of a dataset (Neo4j)
 @app.route('/users/<dataset>')
 def getUsers(dataset):
 
@@ -103,7 +103,7 @@ def getUsers(dataset):
     return(jsonify({'Users': users_Neo}))
 
     
-
+#Return dataset desc (Neo4j)
 @app.route('/description/<dataset>')
 def getDatasetDescription(dataset):
 
@@ -111,7 +111,7 @@ def getDatasetDescription(dataset):
 
     return(jsonify({'Dataset Description': datasetDesc}))
 
-
+#Return datasets of User (Neo4j)
 @app.route('/userInfo/<sunet>')
 def getUserDatasets(sunet):
 
@@ -119,11 +119,12 @@ def getUserDatasets(sunet):
 
     return(jsonify({sunet: userDatasets}))
 
+#Return Publisher of dataset (Neo4j & Roam)
 @app.route('/publisher/<dataset>')
 def getPublisher(dataset):
     
     publisher_Neo = connNeo.getPublisher(dataset)
-
+ 
     with open('../roamLicenseLookup.json') as json_file:
         roamLookup = json.load(json_file)
 
@@ -141,3 +142,27 @@ def getPublisher(dataset):
 
         return(jsonify(publisher_Neo)) 
 
+#Return all dataset titles for Dropdown (Neo4j)
+@app.route('/allDatasets')
+def getAllDatasets():
+
+    allDatasets = connNeo.getAllDatasets()
+
+    return(jsonify(allDatasets))
+
+#Return all dataset titles for Dropdown (Red)
+@app.route('/allRedDatasets')
+def getRedDatasets():
+    dataNames = redivis.organization("stanfordgsblibrary").list_datasets()        
+    names = list()
+    for i in range(0,len(dataNames)):
+        names.append(dataNames[i]['name'])
+    names2 = ', '.join(names)
+    return(names2)
+
+#Return all dataset titles for Dropdown (Roam)
+@app.route('/allRoamDatasets')
+def getRoamDatasets():
+    dataNames = roam.getAllSubscriptions()
+    
+    return(jsonify(dataNames))
