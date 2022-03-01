@@ -2,6 +2,7 @@ library(httr)
 library(jsonlite)
 
 
+
 #Roam
 
 allRoamNames <- function(){
@@ -27,47 +28,41 @@ allRoamNames <- function(){
                  
   }
 
-  return(name)
+  return(sort(name[-1]))
 }
 
 
 
-resp <- allRoamNames() 
-
-View(resp)
-#############################################################
-#############################################################
-
-size <- 1:length(data)
-
-outerLoop <- function(step, outerData){
-  
-  dn <- outerData[[step]][['data']]
-  
-  size2 <- 1:length(dn)
-  
-  sapply(size2, innerLoop, data = dn)
-  
-}
-
-innerLoop <- function(step2, data){
-  
-  data[[step2]][['attributes']][['name']]  
-}
-
-
-
-
-
-  
-#url <- paste0('http://127.0.0.1:5000/allRoamDatasets')  
-  
-#res <- GET(url)
-  
-#data <- as.list((content(res, "parsed")))
-
-resp2 <- sapply(size, outerLoop, outerData=data) 
-
-
-
-
+# resp <- allRoamNames() 
+# 
+# View(resp)
+# #############################################################
+# #############################################################
+#
+# source('getRoamDatasetsSub.R') 
+# # 
+# allRoamNames2 <- function(){
+# 
+#   url <- paste0('http://127.0.0.1:5000/allRoamDatasets')
+# 
+#   res <- GET(url)
+# 
+#   data <- as.list((content(res, "parsed")))
+# 
+#   size <- 1:length(data)
+# 
+#   allNames <- outerLoop(size, outerData=data)
+# 
+#   return(allNames)
+# 
+# }
+# 
+# 
+# resp2 <- allRoamNames2()
+#  
+# 
+# 
+# system.time(allRoamNames())
+# 
+# system.time(allRoamNames2())
+# 

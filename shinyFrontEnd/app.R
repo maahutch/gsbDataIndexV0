@@ -2,6 +2,7 @@ library(shiny)
 
 source('getAllDatasets.R')
 source('getRedDatasets.R')
+source('getRoamDatasets.R')
 
 
 ui <- fluidPage(
@@ -11,13 +12,28 @@ ui <- fluidPage(
          column(4,
                 uiOutput('allNeoName')
                 ),
-         column(8,
+         column(4,
                 uiOutput('allRedName')
                 ),
-         column(12,
+         column(4,
                 uiOutput('allRoamName')
                 )
          
+  ),
+  
+  fluidRow(
+    
+    tabsetPanel(
+                type="tabs",
+                tabPanel("Description"),
+                tabPanel("Storage"),
+                tabPanel("Subscription Period"),
+                tabPanel("Users"),
+                tabPanel("License"),
+                tabPanel("Publisher"),
+                tabPanel("Dataset by User"),
+                tabPanel("Analytics")
+    )
   )
   
   
