@@ -31,3 +31,12 @@ A Flask Rest API that provides a number of endpoints to retrieve dataset metadat
 
 
 ### Shiny Frontend
+A Shiny web app to send arrguments to the data api and prcess the json results into a tabular for for display. Includes a tab page for each end pint category described above. 
+
+`app.R` The main app file describing the layout and interactivity of the app.
+
+`getAllDatasets.R`, `getRedDatasets.R` and `getRoamDatasets.R` are functions that retrieve the data from the enpoints with the same name. These functions are called when the app loads to populate the dropdown menus with dataset names. 
+
+`getDescription.R` Returns data from the `/description/<dataset>` endpoint and displays it as a table. 
+
+`getStorage.R` Returns data from the `/getStorage/<dataset>` endpoint. Can accept result when dataset in Roam and DB but can't yet process results that only include data from only one of the systems. 
