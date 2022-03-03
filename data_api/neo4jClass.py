@@ -15,8 +15,8 @@ class Neo:
     def __getStorage(tx, name):
         query = "MATCH (a:Dataset)-[r:STORED_ON]->(b:StorageSystem) \
                  WHERE a.title = '%s' \
-                 RETURN b.name, b.securityStandard, b.connectionAddress" % (name)
-        
+                 RETURN labels(b), \
+                 [key IN keys(b) | {key: key, value: b[key]}]" % (name) 
         result = tx.run(query, name = name)
         return [record for record in result]
 
@@ -24,15 +24,15 @@ class Neo:
         with self.driver.session() as session:
             result = session.read_transaction(self.__getStorage, dataset)
             storage = list(result)
-            return(storage)
+            return(result)
 
     #License endpoint
     @staticmethod
     def __getLicense(tx, name):
         query = "MATCH (a:Dataset)<-[r:LICENSE_TYPE]-(b:TermsAndConditions) \
                  WHERE a.title = '%s' \
-                 RETURN b.description, b.usageRestriction" % (name)
-        
+                 RETURN labels(b), \
+                 [key IN keys(b) | {key: key, value: b[key]}]" % (name)
         result = tx.run(query, name = name)
         return [record for record in result]
 
@@ -62,27 +62,10 @@ class Neo:
     #Dataset Description
     @staticmethod
     def __getDescription(tx, name):
-        query = "MATCH (a:Dataset) \
-                 WHERE a.title = '%s' \
-                 RETURN a.abstract, \
-                        a.acquisitionNote, \
-                        a.contributor, \
-                        a.contributorIdentifier, \
-                        a.contributorRole, \
-                        a.coverageDate, \
-                        a.coveragePlace, \
-                        a.coveragePopulation, \
-                        a.coverageTopic, \
-                        a.dataFormatNote, \
-                        a.dataResourceType, \
-                        a.documentation, \
-                        a.extent, \
-                        a.onA2Z, \
-                        a.publicationDate, \
-                        a.recordSource, \
-                        a.title, \
-                        a.updatedNote, \
-                        a.verison " % (name)
+        query = "MATCH (a:Dataset)    \
+                 WHERE a.title CONTAINS '%s' \
+                 RETURN labels(a),     \
+                 [key IN keys(a) | {key: key, value: a[key]}]" % (name)
         result = tx.run(query, name=name)
         return [record for record in result]
 

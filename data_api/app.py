@@ -4,6 +4,7 @@ import os.path
 from roamPy.roamClass import Roam
 import redivis
 from neo4jClass import Neo
+from requests import exceptions
 
 app = Flask(__name__)
 
@@ -28,23 +29,36 @@ def home():
 @app.route('/storage/<dataset>')
 def getStorage(dataset):
 
-    uri = "bolt://localhost:7687"
-    user = "neo4j"
-    password = os.environ.get('Neo4j_password')
-    connNeo = Neo(uri = uri, user = user, password=password)
+    try:
+        dataset_Neo = connNeo.getStorage(dataset = dataset)
+    except:
+        dataset_Neo = []
 
-    dataset_Neo = connNeo.getStorage(dataset = dataset)
-    connNeo.close()
+    try: 
+        dataset_Red = redivis.organization("StanfordGSBLibrary").dataset(dataset)
+        dataset_Red.get()
+        dsR = dataset_Red.properties
+    except:
+        dsR = []
 
-    if dataset_Neo[0][0] == 'Redivis':
+    
 
-            dataset_Red = redivis.organization("StanfordGSBLibrary").dataset(dataset)
-            
-            dataset_Red.get()
+    if len(dataset_Neo) == 0 and len(dsR) != 0:
 
-            return(jsonify({'Redivis': dataset_Red.properties, 'Neo4j': dataset_Neo}))
-    else:
+        return(jsonify(dsR))
+    
+    elif len(dataset_Neo) != 0 and len(dsR) == 0:
+
         return(jsonify(dataset_Neo))
+
+    elif len(dataset_Neo) != 0 and len(dsR) != 0:
+
+        return(jsonify({"Database": dataset_Neo,  "Redivis": dsR}))
+
+    else:
+        return(jsonify("No match"))
+        
+    
 
     
 #Return License Information(Neo4j & Roam)
@@ -111,6 +125,8 @@ def getDatasetDescription(dataset):
 
     return(jsonify({'Dataset Description': datasetDesc}))
 
+
+
 #Return datasets of User (Neo4j)
 @app.route('/userInfo/<sunet>')
 def getUserDatasets(sunet):
@@ -142,6 +158,8 @@ def getPublisher(dataset):
 
         return(jsonify(publisher_Neo)) 
 
+
+
 #Return all dataset titles for Dropdown (Neo4j)
 @app.route('/allDatasets')
 def getAllDatasets():
@@ -164,5 +182,5 @@ def getRedDatasets():
 @app.route('/allRoamDatasets')
 def getRoamDatasets():
     dataNames = roam.getAllSubscriptions()
-    
+
     return(jsonify(dataNames))

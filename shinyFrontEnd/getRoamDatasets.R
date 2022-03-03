@@ -13,7 +13,7 @@ allRoamNames <- function(){
   
   data <- as.list((content(res, "parsed")))
   
-  name <- 'Names'
+  name <- 'NA'
   
   for(i in (1:length(data))){
     
@@ -27,8 +27,8 @@ allRoamNames <- function(){
     }
                  
   }
-
-  return(sort(name[-1]))
+  
+  return(sort(name))
 }
 
 
