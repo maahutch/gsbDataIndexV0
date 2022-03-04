@@ -5,6 +5,7 @@ source('getRedDatasets.R')
 source('getRoamDatasets.R')
 source('getDescription.R')
 source('getStorage.R')
+source('getSubscriptionPeriod.R')
 
 
 ui <- fluidPage(
@@ -56,7 +57,11 @@ ui <- fluidPage(
                          fluidRow(
                                   2,
                                   actionButton('spButton', 'Get Subscription Period')
-                                  )
+                                  ),
+                         br(),
+                         br(), 
+                         br(),
+                         dataTableOutput('spTable')
                          ),
                 tabPanel("Users",
                          br(),
@@ -158,10 +163,23 @@ server <- function(input, output){
         return(values$tab.df)
       }
     })  
+  })
+  
+  
+  #Subscription Period
+  observeEvent(input$spButton, {
     
+    values$tab.df <- getSubPeriod(input$datasetRoam)
     
   })
   
+  output$spTable <- renderDataTable({
+    if (is.null(values$tab.df)){
+      return()}
+    else{
+      return(values$tab.df)
+    }
+  })  
   
 }
 
