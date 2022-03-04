@@ -6,6 +6,7 @@ source('getRoamDatasets.R')
 source('getDescription.R')
 source('getStorage.R')
 source('getSubscriptionPeriod.R')
+source("getUsers.R")
 
 
 ui <- fluidPage(
@@ -68,7 +69,11 @@ ui <- fluidPage(
                          fluidRow(
                                   2,
                                   actionButton('userButton', 'Get Users of Dataset')
-                                  )
+                                  ),
+                         br(),
+                         br(),
+                         br(),
+                         dataTableOutput('userTable')
                          ),
                 tabPanel("License",
                          br(),
@@ -181,6 +186,21 @@ server <- function(input, output){
     }
   })  
   
+  
+  #Users
+  observeEvent(input$userButton,{
+    
+    values$tab.df <- getUsers(input$datasetDB)
+    
+  })
+  
+  output$userTable <- renderDataTable({
+    if (is.null(values$tab.df)){
+      return()}
+    else{
+      return(values$tab.df)
+    }
+  })  
 }
 
 

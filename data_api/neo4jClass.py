@@ -47,8 +47,9 @@ class Neo:
     @staticmethod
     def __getUsers(tx, name):
         query = "MATCH (a:Dataset)<-[r:GRANTED_ACCESS]-(b:User) \
-                WHERE a.title = '%s' \
-                RETURN b.name, b.sunet, b.email, b.dept, b.pos, b.phone, b.orcid" % (name)
+                WHERE a.title CONTAINS '%s' \
+                RETURN labels(b),            \
+                [key IN keys(b) | {key: key, value: b[key]}]" % (name)
         result = tx.run(query, name=name)
         return [record for record in result]
 
