@@ -1,7 +1,9 @@
 library(httr)
 library(jsonlite)
 library(anytime)
+library(rlang)
 
+source("getStorageSub.R")
 
 #Storage 
 
@@ -17,42 +19,43 @@ getStorage <- function(dataset){
     
     data <- fromJSON(rawToChar(res$content)) 
     
-    if()                       
-    
-    neo <- data.frame(data$Database[[1]][[2]])
-    
-    
-    neo$key <- c("DatabaseId", "StorageSystem", "StorageSystemAddress", "StorageSystemSecurityStandard" )
-    
-    redivis <- data.frame(t(data.frame("CreatedAt"              = anydate((data$Redivis$createdAt/1000)),
-                                       "UpdatedAt"              = anydate((data$Redivis$updatedAt/1000)),
-                                       "CurrentVersion"         = data$Redivis$currentVersion$tag,
-                                       "CurrentVersionReleased" = data$Redivis$currentVersion$isReleased,
-                                       "CurrentVersionUrl"      = data$Redivis$currentVersion$url,
-                                       "Description"            = ifelse(is.null(data$Redivis$description), 
-                                                                         "No Description", 
-                                                                         data$Redivis$description),
-                                       "Kind"                   = data$Redivis$kind,
-                                       "Name"                   = data$Redivis$name,
-                                       "SizeOnDisk (gb)"        = sprintf((data$Redivis$totalNumBytes/1000000000),fmt='%#.2f'),
-                                       "Owner"                  = data$Redivis$owner$name,
-                                       "OwnerType"              = data$Redivis$owner$kind,
-                                       "TableCount"             = data$Redivis$tableCount
-    )))
-    
-    redivis <- data.frame(names = row.names(redivis), redivis)
-    row.names(redivis)<- NULL
-    
-    
-    colnames(redivis) <- c("key", "value")
-    colnames(neo)     <- c("key", "value")
-    
-    response <- rbind(neo, redivis)
+    if(length(data) == 2){
+      
+      neo <- procNeoResp(data)
+      
+      red <- procRedResp(data)
+      
+      response <- rbind(neo, redivis)
+      
+    } else if(length(data)==1 && data != "No match"){ 
+      
+      data2 <- list("Database")
+      
+      data2$Database <- data
+      
+      response <- procNeoResp(data2)
+      
+    } else if (length(data)==26){
+      
+      data2 <- list("Redivis")
+      
+      data2$Redivis <- data
+      
+      response <- procRedResp(data2)
+      
+    } else {
+      
+      response <- data.frame(Label = "", Value = "No Result Found")
+      
+    }
     
     
-  }else{
+
+    
+    }else{
     response <- data.frame(Label = "", Value = "No Result Found")
-  }
+     }
+  
   return(response)
 }
   

@@ -145,11 +145,11 @@ server <- function(input, output){
     
     firstDF <- getStorage(input$datasetDB)
     
-    if(nrow(firstDF) < 5){
-      values$tab.df <- firstDF
-    }else{
-      values$tab.df <- getStorage(input$datasetRed)
-    }
+     if(nrow(firstDF) > 3){
+       values$tab.df <- firstDF
+     }else{
+       values$tab.df <- getStorage(input$datasetRed)
+     }
     
   output$storageTable <- renderTable({
       if (is.null(values$tab.df)){

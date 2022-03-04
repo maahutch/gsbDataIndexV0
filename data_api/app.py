@@ -41,7 +41,6 @@ def getStorage(dataset):
     except:
         dsR = []
 
-    
 
     if len(dataset_Neo) == 0 and len(dsR) != 0:
 

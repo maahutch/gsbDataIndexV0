@@ -13,7 +13,7 @@ allRoamNames <- function(){
   
   data <- as.list((content(res, "parsed")))
   
-  name <- 'NA'
+  name <- 'No Data'
   
   for(i in (1:length(data))){
     
