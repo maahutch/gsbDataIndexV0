@@ -80,7 +80,11 @@ ui <- fluidPage(
                          fluidRow(
                                   2,
                                   actionButton('licenseButton', 'Get License')
-                                  )
+                                  ),
+                         br(),
+                         br(),
+                         br(),
+                         dataTableOutput('licenseTable')
                          ),
                 tabPanel("Publisher",
                          br(),
@@ -201,6 +205,31 @@ server <- function(input, output){
       return(values$tab.df)
     }
   })  
+  
+  
+  
+  #Licenses
+  observeEvent(input$licensceButton,{
+    
+    firstDF <- getLicense(input$datasetDB)
+    
+    if(nrow(firstDF) > 3){
+      values$tab.df <- firstDF
+    }else{
+      values$tab.df <- getLicense(input$datasetRed)
+    }
+    
+    })
+  
+  output$licenseTable <- renderTable({
+    if (is.null(values$tab.df)){
+      return()}
+    else{
+      return(values$tab.df)
+    }
+  })  
+  
+  
 }
 
 

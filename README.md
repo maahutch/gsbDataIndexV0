@@ -39,4 +39,8 @@ A Shiny web app to send arrguments to the data api and prcess the json results i
 
 `getDescription.R` Returns data from the `/description/<dataset>` endpoint and displays it as a table. 
 
-`getStorage.R` Returns data from the `/getStorage/<dataset>` endpoint. Can accept result when dataset in Roam and DB but can't yet process results that only include data from only one of the systems. 
+`getStorage.R` Returns data from the `/getStorage/<dataset>` endpoint. Can accept result when dataset in Roam or DB  or both but both dropdowns must be set to the same dataset or it will return data for different datasets if both datasets are in both systems. Otherwise, it will only return data for the dataset it can find in either system. Still buggy, needs further testing. 
+
+`getSubscriptionPeriod.R` Returns data from the `getSubscriptionPeriod/<dataset>` endpoint. Retrieves all subscription period data from Roam for the name dataset. 
+
+`getUsers.R` Returns data from the `/users/<dataset>` endpoint. Retireves data on users listed as having access to the named dataset in the Neo4j database. 
