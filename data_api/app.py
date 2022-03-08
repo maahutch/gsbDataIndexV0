@@ -64,25 +64,39 @@ def getStorage(dataset):
 @app.route('/license/<dataset>')
 def getLicense(dataset):
 
-    dataset_Neo = connNeo.getLicense(dataset = dataset)
+    try:
+         dataset_Neo = connNeo.getLicense(dataset = dataset)
+    except:
+         dataset_Neo = []
    
+    try: 
+        with open('../roamLicenseLookup.json') as json_file:
+            roamLookup = json.load(json_file)
 
-    with open('../roamLicenseLookup.json') as json_file:
-        roamLookup = json.load(json_file)
-
-    if dataset.lower() in roamLookup:
-        
-        id = roamLookup[dataset.lower()]
+        id = roamLookup[dataset.lower()] 
 
         license = roam.getOneSubwithRelations(id = str(id), relations=['licensePeriods.license.publisher','licensePeriods.licensePeriodStatus'])
 
-        license = license['included']
-        
-        return(jsonify({'Neo4j': dataset_Neo, 'Roam': license}))
-    
-    else:
+        dataset_Roam = license['included']
+    except: 
+        dataset_Roam = []
 
-        return(jsonify(dataset_Neo)) 
+    #return(jsonify(len(dataset_Neo)))
+
+    if len(dataset_Neo) == 0 and len(dataset_Roam) != 0:
+
+            return(jsonify(dataset_Roam))
+        
+    elif len(dataset_Neo) != 0 and len(dataset_Roam) == 0:
+
+        return(jsonify(dataset_Neo))
+
+    elif len(dataset_Neo) != 0 and len(dataset_Roam) != 0:
+
+        return(jsonify({"Database": dataset_Neo,  "Roam": dataset_Roam}))
+
+    else:
+        return(jsonify("No Data")) 
 
 
 

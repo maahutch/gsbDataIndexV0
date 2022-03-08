@@ -7,7 +7,7 @@ source('getDescription.R')
 source('getStorage.R')
 source('getSubscriptionPeriod.R')
 source("getUsers.R")
-
+source("getLicense.R")
 
 ui <- fluidPage(
   titlePanel("GSB Data Index V0"),
@@ -84,8 +84,12 @@ ui <- fluidPage(
                          br(),
                          br(),
                          br(),
-                         dataTableOutput('licenseTable')
-                         ),
+                         fluidRow(
+                            column(
+                              dataTableOutput('licenseTable'), width=6
+                                   )
+                                  )
+                                ),
                 tabPanel("Publisher",
                          br(),
                          fluidRow(
@@ -97,11 +101,6 @@ ui <- fluidPage(
                 tabPanel("Analytics")
     )
   )
-  
-  
-  
-  
-  
   
   )
   
@@ -209,24 +208,22 @@ server <- function(input, output){
   
   
   #Licenses
-  observeEvent(input$licensceButton,{
+  observeEvent(input$licenseButton,{
     
     firstDF <- getLicense(input$datasetDB)
     
-    if(nrow(firstDF) > 3){
-      values$tab.df <- firstDF
-    }else{
-      values$tab.df <- getLicense(input$datasetRed)
-    }
+    if(nrow(firstDF) == 3){
+       values$tab.df <- firstDF
+     }else{
+       values$tab.df <- getLicense(input$datasetRoam)
+     }
     
     })
   
-  output$licenseTable <- renderTable({
-    if (is.null(values$tab.df)){
-      return()}
-    else{
+  output$licenseTable <- renderDataTable({
+    
       return(values$tab.df)
-    }
+    
   })  
   
   
