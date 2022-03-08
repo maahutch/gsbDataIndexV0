@@ -95,7 +95,15 @@ ui <- fluidPage(
                          fluidRow(
                                   2,
                                   actionButton('publisherButton', 'Get Publisher')
-                                  )
+                                  ),
+                         br(),
+                         br(),
+                         br(),
+                         fluidRow(
+                           column(
+                             tableOutput('publisherTable'), width=6
+                             )
+                           )
                          ),
                 tabPanel("Dataset by User"),
                 tabPanel("Analytics")
@@ -206,7 +214,6 @@ server <- function(input, output){
   })  
   
   
-  
   #Licenses
   observeEvent(input$licenseButton,{
     
@@ -227,6 +234,24 @@ server <- function(input, output){
   })  
   
   
+  #Publisher
+  observeEvent(input$publisherButton,{
+    
+    firstDF <- getPublisher(input$datasetDB)
+    
+    if(nrow(firstDF) == 3){
+      values$tab.df <- firstDF
+    }else{
+      values$tab.df <- getPublisher(input$datasetRoam)
+    }
+    
+  })
+  
+  output$publisherTable <- renderTable({
+    
+    return(values$tab.df)
+    
+  })  
 }
 
 

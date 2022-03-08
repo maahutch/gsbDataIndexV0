@@ -117,8 +117,8 @@ class Neo:
     def __getPublisher(tx, dataset):
         query = "MATCH (a:Publisher)-[r:PUBLISHED_BY]->(b:Dataset) \
                  WHERE b.title = '%s' \
-                 RETURN a.publisherName,      \
-                        a.wikiDataId" % (dataset)
+                 RETURN labels(a),     \
+                 [key IN keys(a) | {key: key, value: a[key]}]" % (dataset)
         result = tx.run(query, dataset=dataset)
         return [record for record in result]
 

@@ -169,7 +169,7 @@ def getPublisher(dataset):
     
     else:
 
-        return(jsonify(publisher_Neo)) 
+        return(jsonify({'Neo4j': publisher_Neo})) 
 
 
 
