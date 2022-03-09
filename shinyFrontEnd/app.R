@@ -3,18 +3,20 @@ library(shiny)
 source('getAllDatasets.R')
 source('getRedDatasets.R')
 source('getRoamDatasets.R')
+source('getAllUserNames.R')
 source('getDescription.R')
 source('getStorage.R')
 source('getSubscriptionPeriod.R')
 source("getUsers.R")
 source("getLicense.R")
 
+
 ui <- fluidPage(
   titlePanel("GSB Data Index V0"),
   
   fluidRow(
          column(4,
-                uiOutput('allNeoName', )
+                uiOutput('allNeoName' )
                 ),
          column(4,
                 uiOutput('allRedName')
@@ -105,11 +107,19 @@ ui <- fluidPage(
                              )
                            )
                          ),
-                tabPanel("Dataset by User"),
+                tabPanel("Dataset by User",
+                         br(),
+                         fluidRow(4,
+                                  uiOutput('allUsers')
+                                  ),
+                         fluidRow(2, 
+                                   actionButton('userButton', "Get Datasets")
+                                  )
+                         ),
+                      
                 tabPanel("Analytics")
+      )
     )
-  )
-  
   )
   
 
@@ -140,6 +150,14 @@ server <- function(input, output){
                 "Select Roam dataset", 
                 choices = allRoamNames(),
                 selected = NULL)
+  })
+  
+  #Dropdown SUNetID's from Neo4j
+  output$allUsers <- renderUI({
+    selectInput("user",
+                "Select a User Name", 
+                choices = allUserNames(),
+                selected = "")
   })
   
   
@@ -252,6 +270,20 @@ server <- function(input, output){
     return(values$tab.df)
     
   })  
+  
+  
+  #Datasets by User
+  observeEvent(input$userButton,{
+    output$tab.df <- getDataByUser(input$user)
+    
+  })
+  
+  
+  output$allUsers <- renderDataTable({
+    return(values$tab.df)
+  })
+  
+  
 }
 
 

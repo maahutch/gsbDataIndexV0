@@ -148,6 +148,7 @@ def getUserDatasets(sunet):
 
     return(jsonify({sunet: userDatasets}))
 
+
 #Return Publisher of dataset (Neo4j & Roam)
 @app.route('/publisher/<dataset>')
 def getPublisher(dataset):
@@ -197,3 +198,11 @@ def getRoamDatasets():
     dataNames = roam.getAllSubscriptions()
 
     return(jsonify(dataNames))
+
+
+#Return all SUNetIDs for dropdown (Neo4j)
+@app.route('/allUsers')
+def getAllusers():
+    allUsers = connNeo.getAllUsers()
+
+    return(jsonify(allUsers))

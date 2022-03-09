@@ -82,25 +82,8 @@ class Neo:
     def __getUserDatasets(tx, sunet):
         query = "MATCH (b:User)-[r:GRANTED_ACCESS]->(a:Dataset) \
                  WHERE b.sunet = '%s' \
-                 RETURN a.abstract, \
-                        a.acquisitionNote, \
-                        a.contributor, \
-                        a.contributorIdentifier, \
-                        a.contributorRole, \
-                        a.coverageDate, \
-                        a.coveragePlace, \
-                        a.coveragePopulation, \
-                        a.coverageTopic, \
-                        a.dataFormatNote, \
-                        a.dataResourceType, \
-                        a.documentation, \
-                        a.extent, \
-                        a.onA2Z, \
-                        a.publicationDate, \
-                        a.recordSource, \
-                        a.title, \
-                        a.updatedNote, \
-                        a.verison " % (sunet)
+                 RETURN labels(a),     \
+                 [key IN keys(a) | {key: key, value: a[key]}]" % (sunet)
         result = tx.run(query, sunet=sunet)
         return [record for record in result]
    
@@ -140,6 +123,19 @@ class Neo:
     def getAllDatasets(self):
         with self.driver.session() as session: 
             result = session.read_transaction(self.__get_Datasets)
+            return(result)
+
+    #AllUserNames
+    @staticmethod
+    def __getAllUsers(tx):
+
+        query = "MATCH (a:User) RETURN a.sunet"
+        result = tx.run(query)
+        return [record for record in result]
+
+    def getAllUsers(self):
+        with self.driver.session() as session: 
+            result = session.read_transaction(self.__getAllUsers)
             return(result)
 
 
