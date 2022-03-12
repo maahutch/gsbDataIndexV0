@@ -139,6 +139,28 @@ class Neo:
             return(result)
 
 
+    #UserDataNodes  
+    @staticmethod
+    def __getUDNodes(tx):
+        query = "MATCH (a:User)-[r:GRANTED_ACCESS]->(b:Dataset) \
+                RETURN a.name,         \
+                       a.sunet,        \
+                       b.title,        \
+                       b.pagerank,     \
+                       b.articlerank,  \
+                       b.eigenvector    "
+        result = tx.run(query)
+        return [record for record in result]
+
+    def getUDNodes(self):
+         with self.driver.session() as session: 
+            result = session.read_transaction(self.__getUDNodes)
+            return(result)
+
+
+
+
+
 # if __name__ =="__main__":
 #    uri = "bolt://127.0.0.1:7687"
 #    user = "neo4j"

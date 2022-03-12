@@ -14,7 +14,7 @@ app.config['dbPwd']             = os.environ.get('Neo4j_password')
 
 roam = Roam('https://api.roam.plus/external/', os.environ.get('Roam_API_Key'))
 
-uri = "bolt://localhost:7687"
+uri = "bolt://localhost:11004"
 user = "neo4j"
 password = os.environ.get('Neo4j_password')
 connNeo = Neo(uri = uri, user = user, password=password)
@@ -206,3 +206,9 @@ def getAllusers():
     allUsers = connNeo.getAllUsers()
 
     return(jsonify(allUsers))
+
+#Return user-data network
+@app.route('/network')
+def getNetwork():
+    network = connNeo.getUDNodes()
+    return(jsonify(network))

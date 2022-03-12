@@ -9,6 +9,7 @@ source('getStorage.R')
 source('getSubscriptionPeriod.R')
 source("getUsers.R")
 source("getLicense.R")
+source("getNetwork.R")
 
 
 ui <- fluidPage(
@@ -102,22 +103,45 @@ ui <- fluidPage(
                          br(),
                          br(),
                          fluidRow(
-                           column(
-                             tableOutput('publisherTable'), width=6
+                            column(
+                              dataTableOutput('publisherTable'), width=6
                              )
                            )
                          ),
                 tabPanel("Dataset by User",
                          br(),
-                         fluidRow(4,
-                                  uiOutput('allUsers')
-                                  ),
-                         fluidRow(2, 
-                                   actionButton('userButton', "Get Datasets")
-                                  )
-                         ),
+                         fluidRow(
+                                  column(4, 
+                                          uiOutput('allUsers')
+                                         ),
+                                  column(4, 
+                                         actionButton('userByDataButton', "Get Datasets")
+                                   )
+                              ),
+                         br(), 
+                         br(),
+                         br(),
+                         fluidRow(
+                           column(
+                             tableOutput("UserByDataset"), width=6
+                           )
+                         )
+                         
+                    ),
                       
-                tabPanel("Analytics")
+                tabPanel("Analytics", 
+                         br(),
+                         fluidRow(
+                           column(4, 
+                                  selectInput('size',
+                                              'Size Dataset nodes by:',
+                                              c('', 'Page Rank', 'Article Rank', 'Eigen Vector'))
+                           )
+                         ),
+                         fluidRow(
+                           visNetworkOutput('network', height = "1000px")
+                         )
+                )
       )
     )
   )
@@ -157,7 +181,7 @@ server <- function(input, output){
     selectInput("user",
                 "Select a User Name", 
                 choices = allUserNames(),
-                selected = "")
+                selected = NULL)
   })
   
   
@@ -265,7 +289,7 @@ server <- function(input, output){
     
   })
   
-  output$publisherTable <- renderTable({
+  output$publisherTable <- renderDataTable({
     
     return(values$tab.df)
     
@@ -273,17 +297,23 @@ server <- function(input, output){
   
   
   #Datasets by User
-  observeEvent(input$userButton,{
-    output$tab.df <- getDataByUser(input$user)
+  observeEvent(input$userByDataButton,{
+    values$tab.df <- getDataByUser(input$user)
     
   })
   
-  
-  output$allUsers <- renderDataTable({
+  output$UserByDataset <- renderTable({
     return(values$tab.df)
   })
   
+  #Network Vis
+  observeEvent(input$size,{
+    values$net <- createNetwork(size=input$size)
+  })
   
+  output$network <- renderVisNetwork({
+    return(values$net)
+  })
 }
 
 
