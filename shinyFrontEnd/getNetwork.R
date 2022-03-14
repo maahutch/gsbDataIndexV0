@@ -23,7 +23,7 @@ createNetwork <- function(size){
                       'ArticleRank',
                       'Eigenvector')
 
-  nodesID <- data.frame(id = (c(unique(resp[,1]), unique(resp[,3]))))
+  nodesID <- data.frame(id = (c(unique(resp[,2]), unique(resp[,3]))))
                       
   nodesVal <- data.frame(resp[,3:6], color = "#175E54")
   
@@ -57,7 +57,7 @@ createNetwork <- function(size){
   
   
   
-  edges <- unique(data.frame(from = c(resp[,1]), to = c(resp[,3])))
+  edges <- unique(data.frame(from = c(resp[,2]), to = c(resp[,3])))
   
   visNetwork(nodes, edges, width = "100%", height = "1000px")
   
