@@ -25,7 +25,7 @@ createNetwork <- function(size){
 
   nodesID <- data.frame(id = (c(unique(resp[,1]), unique(resp[,3]))))
                       
-  nodesVal <- data.frame(resp[,3:6], color = "green")
+  nodesVal <- data.frame(resp[,3:6], color = "#175E54")
   
   nodes <- merge(nodesID, nodesVal, by.x = 'id', by.y = 'Dataset', all.x = T)
   
@@ -33,9 +33,9 @@ createNetwork <- function(size){
   
   nodes$label <- nodes$id
   
-  
-  nodes$PageRank <- ifelse(is.na(nodes$PageRank), 10, as.numeric(nodes$PageRank)*10 )
-  nodes$ArticleRank <- ifelse(is.na(nodes$ArticleRank), 10, as.numeric(nodes$ArticleRank)*10 )
+    
+  nodes$PageRank    <- ifelse(is.na(nodes$PageRank),     10, as.numeric(nodes$PageRank)*10 )
+  nodes$ArticleRank <- ifelse(is.na(nodes$ArticleRank),  10, as.numeric(nodes$ArticleRank)*10 )
   nodes$Eigenvector <- ifelse(is.na(nodes$Eigenvector ), 10, as.numeric(nodes$Eigenvector )*100 )
   
                       
@@ -50,7 +50,7 @@ createNetwork <- function(size){
   }else if(size =='Eigen Vector'){
     
     nodes$size <- nodes$Eigenvector
-    
+  
   }else{
     nodes$size <- 10
   }

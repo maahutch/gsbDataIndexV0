@@ -148,7 +148,7 @@ class Neo:
                        b.title,        \
                        b.pagerank,     \
                        b.articlerank,  \
-                       b.eigenvector    "
+                       b.eigenvector "
         result = tx.run(query)
         return [record for record in result]
 

@@ -1,0 +1,38 @@
+body {
+    background-color: #EAEAEA;
+    color: #8C1515; /* text color */
+    font-family: 'Source Sans Pro', 'Source Serif Pro', sans-serif;
+  }
+
+.btn {
+    background-color:  #C74632;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+  
+.tabbable > .nav > li > a {
+           background-color: #E04F39;
+           color: #EAEAEA;
+           /*border: 2px  #820000 solid;*/
+}
+
+.selectize-input {
+  background: #D5D5D4;
+  color: #820000;
+  
+}
+
+.selectize-dropdown{
+   background-color: white;
+   color: #820000; 
+  
+.plot-output{
+  background-color: #EAEAEA;
+}
+  
+}

@@ -10,9 +10,14 @@ source('getSubscriptionPeriod.R')
 source("getUsers.R")
 source("getLicense.R")
 source("getNetwork.R")
-
+source("getStaticNetwork.R")
 
 ui <- fluidPage(
+  
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "di_custom.css")
+  ),
+  
   titlePanel("GSB Data Index V0"),
   
   fluidRow(
@@ -129,18 +134,42 @@ ui <- fluidPage(
                          
                     ),
                       
-                tabPanel("Analytics", 
-                         br(),
-                         fluidRow(
-                           column(4, 
-                                  selectInput('size',
-                                              'Size Dataset nodes by:',
-                                              c('', 'Page Rank', 'Article Rank', 'Eigen Vector'))
+                tabPanel("Visualization/Analytics", 
+                    br(),
+                    tabsetPanel(
+                         tabPanel('Dynamic',
+                           br(), 
+                           fluidRow(
+                             column(4, 
+                                    selectInput('size',
+                                                'Size Dataset nodes by:',
+                                                c('', 'Page Rank', 'Article Rank', 'Eigen Vector'))
+                             )
+                           ),
+                           fluidRow(
+                             visNetworkOutput('network', height = "750px")
                            )
                          ),
-                         fluidRow(
-                           visNetworkOutput('network', height = "1000px")
-                         )
+                         tabPanel('Static',
+                                  br(),
+                                  fluidRow(
+                                    column(4, 
+                                           selectInput('cluster',
+                                                       'Clustering Algorithm:',
+                                                       c('No Cluster', 
+                                                         'Louvain', 
+                                                         'Fast Greedy',
+                                                         'Leiden',
+                                                         'Label Propagation'))
+                                    )
+                                  ),
+                                  fluidRow(
+                                    plotOutput('staticNetwork', height = "1000px")
+                                  )
+                                  
+                           )
+                     )
+                         
                 )
       )
     )
@@ -306,7 +335,7 @@ server <- function(input, output){
     return(values$tab.df)
   })
   
-  #Network Vis
+  #Dynamic Network Vis
   observeEvent(input$size,{
     values$net <- createNetwork(size=input$size)
   })
@@ -314,6 +343,50 @@ server <- function(input, output){
   output$network <- renderVisNetwork({
     return(values$net)
   })
+  
+  #Static Network Vis
+  observeEvent(input$cluster,{
+   
+    cluster <- input$cluster
+    
+  })
+  
+  output$staticNetwork <- renderPlot({
+    par(bg='#EAEAEA')
+    net <- createStaticNetwork()
+    
+    if(input$cluster == 'No Cluster'){
+      
+      comm <- NULL
+      
+    }else if(input$cluster == 'Louvain'){
+      
+      comm <- cluster_louvain(net)
+      
+    }else if(input$cluster == 'Fast Greedy'){
+      
+      comm <- cluster_fast_greedy(net)
+      
+    }else if(input$cluster == 'Leiden'){
+      
+      comm <- cluster_leiden(net)
+      
+    }else if(input$cluster == 'Label Propagation'){
+      comm <- cluster_label_prop(net)
+    }
+    
+    l <- layout_with_fr(net)
+    
+    plot(net, 
+         vertex.frame.color="#EAEAEA",
+         vertex.size=5,
+         vertex.label = node3$names,
+         vertex.label.cex = 0.75,
+         vertex.label.family	='Source Sans Pro',
+         layout=l,
+         mark.groups = comm)  
+  })
+  
 }
 
 
