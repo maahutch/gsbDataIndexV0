@@ -156,7 +156,7 @@ ui <- fluidPage(
                                     column(4, 
                                            selectInput('cluster',
                                                        'Clustering Algorithm:',
-                                                       c('No Cluster', 
+                                                       c('', 
                                                          'Louvain', 
                                                          'Fast Greedy',
                                                          'Leiden',
@@ -355,7 +355,7 @@ server <- function(input, output){
     par(bg='#EAEAEA')
     net <- createStaticNetwork()
     
-    if(input$cluster == 'No Cluster'){
+    if(input$cluster == ''){
       
       comm <- NULL
       

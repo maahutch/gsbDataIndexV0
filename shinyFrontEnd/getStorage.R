@@ -25,7 +25,7 @@ getStorage <- function(dataset){
       
       red <- procRedResp(data)
       
-      response <- rbind(neo, redivis)
+      response <- rbind(neo, red)
       
     } else if(length(data)==1 && data != "No match"){ 
       
