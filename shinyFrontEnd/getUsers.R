@@ -35,6 +35,12 @@ getUsers <- function(dataset){
     
     response <- response[-1,]
     
+    response <- response[,-1:-3]
+    
+    response$pagerank <- NULL
+    response$degree <- NULL
+    response $eigenvector <- NULL
+    
     return(response)
      
   }else{

@@ -12,7 +12,7 @@ allRedNames <- function(){
   
   resp <- strsplit(data, split=',')
   
-  resp <- append(resp[[1]], 'No Data')
+  resp <- append(resp[[1]], '')
   
   return(sort(resp))     
 }

@@ -13,16 +13,20 @@ getSubPeriod <- function(dataset){
   
   res <- GET(url)
   
-  data <- fromJSON(rawToChar(res$content))
+  if(res$status_code == 200){
   
-  response <- data.frame(data$Roam)
-  
-  names <- colnames(response)
-  
-  resp2 <- cbind(response$id, 
-                 response$type, 
-                 response$attributes,
-                 response$relationships)
-  
+    data <- fromJSON(rawToChar(res$content))
+    
+    response <- data.frame(data$Roam)
+    
+    names <- colnames(response)
+    
+    resp2 <- cbind(response$id, 
+                   response$type, 
+                   response$attributes,
+                   response$relationships)
+  }else{
+    resp2 <- data.frame(Label = "", Value = "No Result Found")
+  }
   return(resp2)
 }

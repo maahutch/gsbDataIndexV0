@@ -85,11 +85,11 @@ def getLicense(dataset):
 
     if len(dataset_Neo) == 0 and len(dataset_Roam) != 0:
 
-            return(jsonify(dataset_Roam))
+            return(jsonify({"Roam": dataset_Roam}))
         
     elif len(dataset_Neo) != 0 and len(dataset_Roam) == 0:
 
-        return(jsonify(dataset_Neo))
+        return(jsonify({"Database": dataset_Neo}))
 
     elif len(dataset_Neo) != 0 and len(dataset_Roam) != 0:
 

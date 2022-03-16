@@ -219,15 +219,15 @@ server <- function(input, output){
   #Description
   observeEvent(input$descButton, {
     
-    values$tab.df <- getDescription(input$datasetDB)
+    values$tab.df1 <- getDescription(input$datasetDB)
     
   })
   
   output$descriptionTable <- renderTable({
-    if (is.null(values$tab.df)){
+    if (is.null(values$tab.df1)){
       return()}
     else{
-      return(values$tab.df)
+      return(values$tab.df1)
     }
   })
   
@@ -290,11 +290,17 @@ server <- function(input, output){
     
     firstDF <- getLicense(input$datasetDB)
     
-    if(nrow(firstDF) == 3){
-       values$tab.df <- firstDF
-     }else{
-       values$tab.df <- getLicense(input$datasetRoam)
-     }
+    secondDF <- getLicense(input$datasetRoam)
+    
+     if(nrow(firstDF) == 10 ){
+        values$tab.df <- firstDF
+      }else if(nrow(secondDF) == 10){
+        values$tab.df <- secondDF
+      }else if(nrow(firstDF) == 3){
+        values$tab.df <- firstDF
+      }else if(nrow(secondDF)==7){
+        values$tab.df <- secondDF
+      }
     
     })
   

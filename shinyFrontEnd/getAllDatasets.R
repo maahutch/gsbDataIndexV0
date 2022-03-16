@@ -14,7 +14,7 @@ allDataNames <- function(dataset){
   
   resp <- data.frame(data)
   
-  resp <- append(resp[, 1], 'No Data')
+  resp <- append(resp[, 1], '')
   
   return(sort(resp))
 }

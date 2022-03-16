@@ -5,6 +5,8 @@ library(jsonlite)
 
 getLicense <- function(dataset){
   
+ # ds <- tolower(dataset)
+  
   ds2 <- gsub(" ", "%20", dataset)
   
   url <- paste0('http://127.0.0.1:5000/license/', ds2)  
@@ -14,16 +16,50 @@ getLicense <- function(dataset){
   if(res$status_code == 200){
     
     data <- fromJSON(rawToChar(res$content)) 
-  
-    if(is.data.frame(data) == F && data != "No Data"){
+    
+
+    if(data[[1]][[1]][[1]] == 'TermsAndConditions' && length(data) ==1){
       
-      resp <- data.frame(data[[1]][[2]])
+      resp <- data.frame(data$Database[[1]][[2]])
       
-    }else if(is.data.frame(data) == T && length(data) > 1 ){
+    }else if(data[[1]][[1]][[1]] != 'TermsAndConditions' && length(data) == 1 ){
       
-      resp <- data.frame(data)
-    }else{
-      resp <- data.frame(Label = "", Value = "No Result Found")
+      all <- data.frame(data$Roam)
+      
+      license <- subset(all, all$type =='licenses')
+      
+      resp <- data.frame(t(license))
+      
+      resp <- data.frame(key = c('createdAt',
+                                  'name',
+                                  'updatedAt',
+                                  'endDate', 
+                                  'startDate',
+                                  'summary',
+                                  'id'),
+                          value = resp[1:7,])
+      
+    }else if (length(data) == 2){
+    
+      top <- data.frame(data$Database[[1]][[2]])
+      
+      all <- data.frame(data$Roam)
+      
+      license <- subset(all, all$type =='licenses')
+      
+      resp <- data.frame(t(license))
+      
+      bottom <- data.frame(key = c('createdAt',
+                                 'name',
+                                 'updatedAt',
+                                 'endDate', 
+                                 'startDate',
+                                 'summary',
+                                 'id'),
+                         value = resp[1:7,])
+      
+      resp <- rbind(top, bottom)
+      
     }
     
   }else{
@@ -32,3 +68,9 @@ getLicense <- function(dataset){
   return(resp)
    
 }
+
+#dataset <- 'Visa'
+
+#dataset <- 'Airtable'
+
+#dataset <- 'Orbis'
